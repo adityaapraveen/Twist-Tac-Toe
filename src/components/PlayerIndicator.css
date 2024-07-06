@@ -1,0 +1,19 @@
+.player-indicator {
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.player-indicator span {
+    display: inline-block;
+    margin: 0 5px;
+    transition: color 0.7s;
+}
+
+.player-indicator span:hover {
+    color: #ff0000;
+    /* Change to desired hover color */
+    transform: scale(1.2);
+}
