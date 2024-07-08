@@ -19,20 +19,19 @@ function App() {
   ];
 
   const [board, setBoard] = useState(Array(9).fill(null));
-  const [xPlaying, setXPlaying] = useState(null); // Track which player starts first
+  const [xPlaying, setXPlaying] = useState(null);
   const [scores, setScores] = useState({ X: 0, O: 0 });
   const [gameOver, setGameOver] = useState(false);
-  const [isDraw, setIsDraw] = useState(false); // State to track if the game is a draw
-  const [moves, setMoves] = useState({ X: [], O: [] }); // Track X and O moves separately
-  const [winner, setWinner] = useState(null); // State to track the winner
+  const [isDraw, setIsDraw] = useState(false);
+  const [moves, setMoves] = useState({ X: [], O: [] });
+  const [winner, setWinner] = useState(null);
 
   const handleWin = (winner) => {
-  setScores(prevScores => ({
-    ...prevScores,
-    [winner]: prevScores[winner] + 1
-  }));
-};
-
+    setScores((prevScores) => ({
+      ...prevScores,
+      [winner]: prevScores[winner] + 1,
+    }));
+  };
 
   const handleBoxClick = (boxIdx) => {
     if (board[boxIdx] || gameOver) return;
@@ -41,19 +40,15 @@ function App() {
     const updatedBoard = [...board];
     updatedBoard[boxIdx] = currentPlayer;
 
-    // Update moves array with current move
     const updatedMoves = { ...moves, [currentPlayer]: [...moves[currentPlayer], boxIdx] };
 
-    // Remove oldest move if there are more than 3 moves of the same type
     if (updatedMoves[currentPlayer].length > 3) {
       const oldestMove = updatedMoves[currentPlayer].shift();
       updatedBoard[oldestMove] = null;
     }
 
-    // Check for winner after updating the board and moves
     const detectedWinner = checkWinner(updatedBoard);
-    
-    // Update state before announcing the winner
+
     setBoard(updatedBoard);
     setMoves(updatedMoves);
 
@@ -61,10 +56,10 @@ function App() {
       handleWin(detectedWinner);
       setWinner(detectedWinner);
       setGameOver(true);
-      setIsDraw(false); // Game is not a draw
-    } else if (updatedBoard.every(value => value !== null)) {
+      setIsDraw(false);
+    } else if (updatedBoard.every((value) => value !== null)) {
       setGameOver(true);
-      setIsDraw(true); // Game is a draw
+      setIsDraw(true);
     } else {
       setXPlaying(!xPlaying);
     }
@@ -83,16 +78,16 @@ function App() {
   const resetBoard = () => {
     setGameOver(false);
     setBoard(Array(9).fill(null));
-    setXPlaying(null); // Reset player choice
-    setIsDraw(false); // Reset draw state
-    setMoves({ X: [], O: [] }); // Reset moves
-    setWinner(null); // Reset winner
+    setXPlaying(null);
+    setIsDraw(false);
+    setMoves({ X: [], O: [] });
+    setWinner(null);
   };
 
   const handlePlayerSelect = (player) => {
     setXPlaying(player === 'X');
-    setGameOver(false); // Reset game over state
-    setScores({ X: 0, O: 0 }); // Reset scores
+    setGameOver(false);
+    setScores({ X: 0, O: 0 });
   };
 
   const textVariants = {

@@ -3,15 +3,15 @@ import './ScoreBoard.css';
 import { motion } from 'framer-motion';
 
 const ScoreBoard = ({ scores, xPlaying }) => {
-  const { xScore, oScore } = scores;
+  const { X: xScore, O: oScore } = scores;
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, 4000); // Set timeout for 1 second
+    }, 4000);
 
-    return () => clearTimeout(timer); // Clean up timer
+    return () => clearTimeout(timer);
   }, []);
 
   const containerVariants = {
@@ -20,7 +20,6 @@ const ScoreBoard = ({ scores, xPlaying }) => {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        
       },
     },
   };
