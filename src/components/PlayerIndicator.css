@@ -4,16 +4,37 @@
     align-items: center;
     justify-content: center;
     margin: 20px 0;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    font-family: "VT323", monospace;
+        font-weight: 400;
+        font-style: normal;
 }
 
-.player-indicator span {
+.player-indicator.x-turn {
+    color: rgb(254, 93, 93);
+    /* Adjust color for X's turn */
+    font-family: "VT323", monospace;
+        font-weight: 400;
+        font-style: normal;
+}
+
+.player-indicator.o-turn {
+    color: rgb(0, 162, 255);
+    /* Adjust color for O's turn */
+    font-family: "VT323", monospace;
+        font-weight: 400;
+        font-style: normal;
+}
+
+/* .player-indicator span {
     display: inline-block;
     margin: 0 5px;
     transition: color 0.7s;
-}
+} */
 
 .player-indicator span:hover {
     color: #ff0000;
     /* Change to desired hover color */
-    transform: scale(1.2);
+    transform: scale(1.8);
 }

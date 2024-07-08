@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import './App.css';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ScoreBoard from './components/ScoreBoard';
 import Board from './components/Board';
 import ResetButton from './components/ResetButton';
 import PlayerIndicator from './components/PlayerIndicator';
-import AnimatedCharacters from './components/AnimatedCharacters';
 
 function App() {
   const WIN_CONDITIONS = [
@@ -24,33 +23,49 @@ function App() {
   const [scores, setScores] = useState({ xScore: 0, oScore: 0 });
   const [gameOver, setGameOver] = useState(false);
   const [isDraw, setIsDraw] = useState(false); // State to track if the game is a draw
+  const [xWins, setXWins] = useState(0); // Track number of wins for X
+  const [oWins, setOWins] = useState(0); // Track number of wins for O
+  
+  const handleWin = (winner) => {
+    if (winner === 'X') {
+      setXWins(xWins + 1);
+    } else if (winner === 'O') {
+      setOWins(oWins + 1);
+    }
+  };
 
   const handleBoxClick = (boxIdx) => {
     if (board[boxIdx] || gameOver) return;
 
-    // Check number of Xs and Os on the board
     const xCount = board.filter((value) => value === 'X').length;
     const oCount = board.filter((value) => value === 'O').length;
 
-    // If 3 Xs or Os are on the board, make previous ones semi-transparent
-    if ((xPlaying && xCount === 3) || (!xPlaying && oCount === 3)) {
-      const updatedBoard = board.map((value, idx) => {
-        if (value === (xPlaying ? 'X' : 'O')) {
-          return 'semi-transparent';
+    // If more than 3 Xs or Os, remove the oldest ones
+    if ((xPlaying && xCount >= 3) || (!xPlaying && oCount >= 3)) {
+      let updatedBoard = [...board];
+
+      // Find the index of the oldest X or O
+      const oldestIndex = updatedBoard.findIndex(
+        (value, idx) => value === (xPlaying ? 'X' : 'O')
+      );
+
+      // Remove the oldest X or O from the board
+      updatedBoard[oldestIndex] = null;
+
+      // Reset opacity for the remaining Xs or Os
+      updatedBoard = updatedBoard.map((value) => {
+        if (value === 'X' || value === 'O') {
+          return 'semi-transparent'; // You can define a class for semi-transparent style
         } else {
           return value;
         }
       });
+
       setBoard(updatedBoard);
     }
 
-    const updatedBoard = board.map((value, idx) => {
-      if (idx === boxIdx) {
-        return xPlaying ? 'X' : 'O';
-      } else {
-        return value;
-      }
-    });
+    const updatedBoard = [...board];
+    updatedBoard[boxIdx] = xPlaying ? 'X' : 'O';
 
     const winner = checkWinner(updatedBoard);
     if (winner) {
@@ -59,11 +74,13 @@ function App() {
           ...prevScores,
           oScore: prevScores.oScore + 1,
         }));
+        setOWins(oWins + 1); // Increment O wins count
       } else {
         setScores((prevScores) => ({
           ...prevScores,
           xScore: prevScores.xScore + 1,
         }));
+        setXWins(xWins + 1); // Increment X wins count
       }
       setGameOver(true);
       setIsDraw(false); // Game is not a draw
@@ -95,51 +112,110 @@ function App() {
 
   const handlePlayerSelect = (player) => {
     setXPlaying(player === 'X');
+    setGameOver(false); // Reset game over state
+    setXWins(0); // Reset X wins count
+    setOWins(0); // Reset O wins count
   };
 
-  // Render player selection screen if xPlaying is null
-  if (xPlaying === null) {
-    return (
-      <div className='App'>
-        <motion.h2
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.7 }}
-        >
-          Choose which player starts first:
-        </motion.h2>
-        <motion.button
-          whileHover={{ scale: 1.3 }}
-          onClick={() => handlePlayerSelect('X')}
-        >
-          X
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.3 }}
-          onClick={() => handlePlayerSelect('O')}
-        >
-          O
-        </motion.button>
-      </div>
-    );
-  }
+  const textVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.5,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const letterVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0 },
+  };
 
   return (
     <div className='App'>
-      <ScoreBoard scores={scores} xPlaying={xPlaying} />
-      <PlayerIndicator xPlaying={xPlaying} />
-      {isDraw && (
+      {xPlaying === null ? (
         <motion.div
-          className='draw-message'
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
+          className='centered-container'
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <AnimatedCharacters type='paragraph' text='Its a draw!' />
+          <AnimatePresence>
+            <motion.h2
+              variants={textVariants}
+              initial='hidden'
+              animate='visible'
+              whileHover={{
+        rotateY: 10, // Rotate along the Y axis
+        perspective: 800, // Apply perspective to create depth
+        scale: 1.8, // Scale up a bit on hover
+        zIndex: 1, // Ensure it's above other elements
+      }}
+            >
+              {'?Who is playing first?'.split('').map((letter, index) => (
+                <motion.span key={index} variants={letterVariants}>{letter}</motion.span>
+              ))}
+            </motion.h2>
+          </AnimatePresence>
+          <div className='player-select-buttons'>
+            <motion.div
+              whileHover={{ scale: 1.3 }}
+              whileTap={{ scale: 0.9 }}
+              className='player-select-button'
+              onClick={() => handlePlayerSelect('X')}
+            >
+              X
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.3 }}
+              whileTap={{ scale: 0.9 }}
+              className='player-select-button'
+              onClick={() => handlePlayerSelect('O')}
+            >
+              O
+            </motion.div>
+          </div>
         </motion.div>
+      ) : (
+        <>
+          <ScoreBoard scores={scores} xPlaying={xPlaying} />
+          {xWins > 0 && !isDraw && (
+            <motion.div
+              className='win-message'
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              Player X Wins!
+            </motion.div>
+          )}
+          {oWins > 0 && !isDraw && (
+            <motion.div
+              className='win-message'
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              Player O Wins!
+            </motion.div>
+          )}
+          {isDraw && (
+            <motion.div
+              className='draw-message'
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            >
+              It's a draw!
+            </motion.div>
+          )}
+          {!isDraw && !xWins && !oWins && <PlayerIndicator xPlaying={xPlaying} />}
+          <Board board={board} onClick={handleBoxClick} />
+          <ResetButton resetBoard={resetBoard} />
+        </>
       )}
-      <Board board={board} onClick={handleBoxClick} />
-      <ResetButton resetBoard={resetBoard} />
     </div>
   );
 }

@@ -1,9 +1,29 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import './ResetButton.css';
 
 const ResetButton = ({ resetBoard }) => {
+  const buttonVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: 'spring',
+        stiffness: 120,
+        delay: 0.4, // Optional delay for animation
+      },
+    },
+  };
+
   return (
-    <button onClick={resetBoard}>
+    <motion.button
+      onClick={resetBoard}
+      className="reset-button"
+      variants={buttonVariants}
+      initial="hidden"
+      animate="visible"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 36 36"
@@ -46,7 +66,8 @@ const ResetButton = ({ resetBoard }) => {
       </svg>
       <span className="now">Game?</span>
       <span className="play">Another-</span>
-    </button>
+    </motion.button>
   );
 };
+
 export default ResetButton;
