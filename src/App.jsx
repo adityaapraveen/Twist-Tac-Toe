@@ -20,77 +20,54 @@ function App() {
 
   const [board, setBoard] = useState(Array(9).fill(null));
   const [xPlaying, setXPlaying] = useState(null); // Track which player starts first
-  const [scores, setScores] = useState({ xScore: 0, oScore: 0 });
+  const [scores, setScores] = useState({ X: 0, O: 0 });
   const [gameOver, setGameOver] = useState(false);
   const [isDraw, setIsDraw] = useState(false); // State to track if the game is a draw
-  const [xWins, setXWins] = useState(0); // Track number of wins for X
-  const [oWins, setOWins] = useState(0); // Track number of wins for O
-  
+  const [moves, setMoves] = useState({ X: [], O: [] }); // Track X and O moves separately
+  const [winner, setWinner] = useState(null); // State to track the winner
+
   const handleWin = (winner) => {
-    if (winner === 'X') {
-      setXWins(xWins + 1);
-    } else if (winner === 'O') {
-      setOWins(oWins + 1);
-    }
-  };
+  setScores(prevScores => ({
+    ...prevScores,
+    [winner]: prevScores[winner] + 1
+  }));
+};
+
 
   const handleBoxClick = (boxIdx) => {
     if (board[boxIdx] || gameOver) return;
 
-    const xCount = board.filter((value) => value === 'X').length;
-    const oCount = board.filter((value) => value === 'O').length;
+    const currentPlayer = xPlaying ? 'X' : 'O';
+    const updatedBoard = [...board];
+    updatedBoard[boxIdx] = currentPlayer;
 
-    // If more than 3 Xs or Os, remove the oldest ones
-    if ((xPlaying && xCount >= 3) || (!xPlaying && oCount >= 3)) {
-      let updatedBoard = [...board];
+    // Update moves array with current move
+    const updatedMoves = { ...moves, [currentPlayer]: [...moves[currentPlayer], boxIdx] };
 
-      // Find the index of the oldest X or O
-      const oldestIndex = updatedBoard.findIndex(
-        (value, idx) => value === (xPlaying ? 'X' : 'O')
-      );
-
-      // Remove the oldest X or O from the board
-      updatedBoard[oldestIndex] = null;
-
-      // Reset opacity for the remaining Xs or Os
-      updatedBoard = updatedBoard.map((value) => {
-        if (value === 'X' || value === 'O') {
-          return 'semi-transparent'; // You can define a class for semi-transparent style
-        } else {
-          return value;
-        }
-      });
-
-      setBoard(updatedBoard);
+    // Remove oldest move if there are more than 3 moves of the same type
+    if (updatedMoves[currentPlayer].length > 3) {
+      const oldestMove = updatedMoves[currentPlayer].shift();
+      updatedBoard[oldestMove] = null;
     }
 
-    const updatedBoard = [...board];
-    updatedBoard[boxIdx] = xPlaying ? 'X' : 'O';
+    // Check for winner after updating the board and moves
+    const detectedWinner = checkWinner(updatedBoard);
+    
+    // Update state before announcing the winner
+    setBoard(updatedBoard);
+    setMoves(updatedMoves);
 
-    const winner = checkWinner(updatedBoard);
-    if (winner) {
-      if (winner === 'O') {
-        setScores((prevScores) => ({
-          ...prevScores,
-          oScore: prevScores.oScore + 1,
-        }));
-        setOWins(oWins + 1); // Increment O wins count
-      } else {
-        setScores((prevScores) => ({
-          ...prevScores,
-          xScore: prevScores.xScore + 1,
-        }));
-        setXWins(xWins + 1); // Increment X wins count
-      }
+    if (detectedWinner) {
+      handleWin(detectedWinner);
+      setWinner(detectedWinner);
       setGameOver(true);
       setIsDraw(false); // Game is not a draw
-    } else if (updatedBoard.every((value) => value !== null)) {
+    } else if (updatedBoard.every(value => value !== null)) {
       setGameOver(true);
       setIsDraw(true); // Game is a draw
+    } else {
+      setXPlaying(!xPlaying);
     }
-
-    setBoard(updatedBoard);
-    setXPlaying(!xPlaying);
   };
 
   const checkWinner = (board) => {
@@ -108,13 +85,14 @@ function App() {
     setBoard(Array(9).fill(null));
     setXPlaying(null); // Reset player choice
     setIsDraw(false); // Reset draw state
+    setMoves({ X: [], O: [] }); // Reset moves
+    setWinner(null); // Reset winner
   };
 
   const handlePlayerSelect = (player) => {
     setXPlaying(player === 'X');
     setGameOver(false); // Reset game over state
-    setXWins(0); // Reset X wins count
-    setOWins(0); // Reset O wins count
+    setScores({ X: 0, O: 0 }); // Reset scores
   };
 
   const textVariants = {
@@ -148,13 +126,13 @@ function App() {
               initial='hidden'
               animate='visible'
               whileHover={{
-        rotateY: 10, // Rotate along the Y axis
-        perspective: 800, // Apply perspective to create depth
-        scale: 1.8, // Scale up a bit on hover
-        zIndex: 1, // Ensure it's above other elements
-      }}
+                rotateY: 10,
+                perspective: 800,
+                scale: 1.8,
+                zIndex: 1,
+              }}
             >
-              {'?Who is playing first?'.split('').map((letter, index) => (
+              {'Who is playing first?'.split('').map((letter, index) => (
                 <motion.span key={index} variants={letterVariants}>{letter}</motion.span>
               ))}
             </motion.h2>
@@ -181,24 +159,14 @@ function App() {
       ) : (
         <>
           <ScoreBoard scores={scores} xPlaying={xPlaying} />
-          {xWins > 0 && !isDraw && (
+          {gameOver && !isDraw && (
             <motion.div
               className='win-message'
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: 'easeInOut' }}
             >
-              Player X Wins!
-            </motion.div>
-          )}
-          {oWins > 0 && !isDraw && (
-            <motion.div
-              className='win-message'
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: 'easeInOut' }}
-            >
-              Player O Wins!
+              Player {winner} Wins!
             </motion.div>
           )}
           {isDraw && (
@@ -211,7 +179,7 @@ function App() {
               It's a draw!
             </motion.div>
           )}
-          {!isDraw && !xWins && !oWins && <PlayerIndicator xPlaying={xPlaying} />}
+          {!gameOver && <PlayerIndicator xPlaying={xPlaying} />}
           <Board board={board} onClick={handleBoxClick} />
           <ResetButton resetBoard={resetBoard} />
         </>
