@@ -8,10 +8,10 @@ export const Box = ({ value, onClick }) => {
       className="box"
       onClick={onClick}
       whileHover={{ scale: 1.1, rotateY: 10, boxShadow: '0px 15px 25px rgba(0, 0, 0, 0.3)' }}
-      whileTap={{ scale: 0.9, rotateY: -10, rotateZ:200, boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.3)' }}
+      whileTap={{ scale: 0.9, rotateY: -10, rotateZ: 200, boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.3)' }}
       transition={{ type: 'spring', stiffness: 300 }}
     >
-      {value}
+      <span className={value === 'O' ? 'sky-blue' : ''}>{value}</span>
     </motion.div>
   );
 };

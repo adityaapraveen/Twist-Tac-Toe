@@ -5,6 +5,8 @@ import ScoreBoard from './components/ScoreBoard';
 import Board from './components/Board';
 import ResetButton from './components/ResetButton';
 import PlayerIndicator from './components/PlayerIndicator';
+import Guide from './components/Guide';
+import ThreeScene from './components/ThreeDbg';
 
 function App() {
   const WIN_CONDITIONS = [
@@ -108,6 +110,7 @@ function App() {
 
   return (
     <div className='App'>
+      <ThreeScene />
       {xPlaying === null ? (
         <motion.div
           className='centered-container'
@@ -116,6 +119,7 @@ function App() {
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           <AnimatePresence>
+            <Guide />
             <motion.h2
               variants={textVariants}
               initial='hidden'
@@ -127,8 +131,8 @@ function App() {
                 zIndex: 1,
               }}
             >
-              {'Who is playing first?'.split('').map((letter, index) => (
-                <motion.span key={index} variants={letterVariants}>{letter}</motion.span>
+              {'?Who is playing first?'.split('').map((letter, index) => (
+                <motion.span key={`${letter}-${index}`} variants={letterVariants}>{letter}</motion.span>
               ))}
             </motion.h2>
           </AnimatePresence>

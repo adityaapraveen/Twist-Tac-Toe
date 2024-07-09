@@ -11,6 +11,7 @@
     border-radius: 0.5rem;
     font-weight: bold;
     cursor: pointer;
+    margin-top: 0rem;
 }
 
 .score {
@@ -59,3 +60,4 @@
 .inactive {
     border-bottom: 5px solid transparent;
 }
+

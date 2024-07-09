@@ -1,0 +1,23 @@
+.guide-container {
+    margin: 0px;
+    padding: 0px;
+    color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: "VT323", monospace;
+        font-weight: 400;
+        font-style: normal;
+        width: 90%;
+        cursor: pointer;
+}
+
+.guide-container h2 {
+    margin-bottom: 10px;
+}
+
+.guide-container p {
+    margin: 5px 0;
+}
+span {
+    color: red;
+}
