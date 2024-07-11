@@ -110,7 +110,7 @@ function App() {
 
   return (
     <div className='App'>
-      <ThreeScene />
+      {/* <ThreeScene /> */}
       {xPlaying === null ? (
         <motion.div
           className='centered-container'
