@@ -6,7 +6,7 @@ import Board from './components/Board';
 import ResetButton from './components/ResetButton';
 import PlayerIndicator from './components/PlayerIndicator';
 import Guide from './components/Guide';
-import ThreeScene from './components/ThreeDbg';
+// import ThreeScene from './components/ThreeDbg';
 
 function App() {
   const WIN_CONDITIONS = [
