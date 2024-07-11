@@ -123,6 +123,7 @@ function App() {
             <motion.h2
               variants={textVariants}
               initial='hidden'
+              className='playing-first'
               animate='visible'
               whileHover={{
                 rotateY: 10,

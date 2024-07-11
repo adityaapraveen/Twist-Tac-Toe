@@ -1,5 +1,5 @@
 .guide-container {
-    margin: 0px;
+    margin-top: 75px;
     padding: 0px;
     color: #f9f9f9;
     border-radius: 10px;
@@ -20,4 +20,12 @@
 }
 span {
     color: red;
+}
+
+.how-to-play {
+    font-size: 4rem;
+}
+
+p {
+    font-size: 2rem;
 }

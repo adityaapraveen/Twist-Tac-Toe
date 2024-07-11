@@ -50,3 +50,42 @@ h2, .draw-message, .win-message {
     cursor: pointer;
 }
 
+/* App.css */
+/* App.css */
+.video-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.local-video,
+.remote-video {
+    width: 45%;
+    height: auto;
+    border: 2px solid black;
+}
+
+.control-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.control-buttons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.xPlayer {
+    color: rgb(255, 80, 80);
+}
+
+.oPlayer {
+    color: rgb(36, 193, 255);
+}
+
+.playing-first {
+    font-size: 3rem;
+}
