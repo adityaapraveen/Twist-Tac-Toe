@@ -89,3 +89,21 @@ h2, .draw-message, .win-message {
 .playing-first {
     font-size: 3rem;
 }
+
+@media (max-width: 768px) {
+    .board-container {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .board {
+        margin-top: 20px;
+    }
+
+    .scoreboard {
+        margin-top: 20px;
+    }
+}

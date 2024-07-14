@@ -119,12 +119,12 @@ function App() {
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           <AnimatePresence>
-            <Guide />
+            <Guide key='guide' />
             <motion.h2
               variants={textVariants}
               initial='hidden'
-              className='playing-first'
               animate='visible'
+              className='playing-first'
               whileHover={{
                 rotateY: 10,
                 perspective: 800,
@@ -132,24 +132,24 @@ function App() {
                 zIndex: 1,
               }}
             >
-              {'?Who is playing first?'.split('').map((letter, index) => (
-                <motion.span key={`${letter}-${index}`} variants={letterVariants}>{letter}</motion.span>
+              {'Who is playing first?'.split('').map((letter, index) => (
+                <motion.span key={`letter-${index}`} variants={letterVariants}>{letter}</motion.span>
               ))}
             </motion.h2>
           </AnimatePresence>
           <div className='player-select-buttons'>
             <motion.div
+              className='player-select-button'
               whileHover={{ scale: 1.3 }}
               whileTap={{ scale: 0.9 }}
-              className='player-select-button'
               onClick={() => handlePlayerSelect('X')}
             >
               X
             </motion.div>
             <motion.div
+              className='player-select-button'
               whileHover={{ scale: 1.3 }}
               whileTap={{ scale: 0.9 }}
-              className='player-select-button'
               onClick={() => handlePlayerSelect('O')}
             >
               O
@@ -157,8 +157,8 @@ function App() {
           </div>
         </motion.div>
       ) : (
-        <>
-          <ScoreBoard scores={scores} xPlaying={xPlaying} />
+        <div className='board-container'>
+          <ScoreBoard key='scoreboard' scores={scores} xPlaying={xPlaying} className='scoreboard' />
           {gameOver && !isDraw && (
             <motion.div
               className='win-message'
@@ -179,10 +179,10 @@ function App() {
               It's a draw!
             </motion.div>
           )}
-          {!gameOver && <PlayerIndicator xPlaying={xPlaying} />}
-          <Board board={board} onClick={handleBoxClick} />
-          <ResetButton resetBoard={resetBoard} />
-        </>
+          {!gameOver && <PlayerIndicator key='player-indicator' xPlaying={xPlaying} />}
+          <Board key='board' board={board} onClick={handleBoxClick} className='board' />
+          <ResetButton key='reset-button' resetBoard={resetBoard} />
+        </div>
       )}
     </div>
   );
